@@ -21,7 +21,7 @@ gem "jbuilder"
 
 gem 'devise'
 gem 'devise-jwt'
-
+gem 'sidekiq'
 gem 'bcrypt'
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]

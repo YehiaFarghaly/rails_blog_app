@@ -88,9 +88,14 @@ Devise.setup do |config|
   # config.http_authentication_realm = 'Application'
 
   config.jwt do |jwt|
-    jwt.secret = 'serak_fy_beer' # Recommended to use an environment variable
-    # Or for development:
-    # jwt.secret = 'a-long-and-secure-secret-key-you-generate'
+    jwt.secret = Rails.application.credentials.devise[:jwt_secret_key]
+    jwt.dispatch_requests = [
+      ['POST', %r{^/login$}]
+    ]
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/logout$}]
+    ]
+    jwt.expiration_time = 1.day.to_i
   end
 
   # It will change confirmation, password recovery and other workflows

@@ -1,38 +1,33 @@
+
 require "test_helper"
 
 class TagsControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    @user = User.create!(name: "TestUser", email: "testuser3@example.com", password: "password")
+    @tag = Tag.create!(name: "TestTag2")
+  end
+
   test "should get index" do
-    get tags_index_url
+    get tags_url, headers: auth_headers_json(@user)
     assert_response :success
+    assert_match @tag.name, @response.body
   end
 
   test "should get show" do
-    get tags_show_url
+    get tag_url(@tag), headers: auth_headers_json(@user)
     assert_response :success
+    assert_match @tag.name, @response.body
   end
 
-  test "should get new" do
-    get tags_new_url
-    assert_response :success
+  test "should not get index without auth" do
+    get tags_url
+    assert_response :unauthorized
   end
 
-  test "should get create" do
-    get tags_create_url
-    assert_response :success
-  end
-
-  test "should get edit" do
-    get tags_edit_url
-    assert_response :success
-  end
-
-  test "should get update" do
-    get tags_update_url
-    assert_response :success
-  end
-
-  test "should get destroy" do
-    get tags_destroy_url
-    assert_response :success
+  private
+  def auth_headers_json(user)
+    post user_session_url, params: { email: user.email, password: "password" }, as: :json
+    token = JSON.parse(@response.body)["token"]
+    { 'Authorization' => "Bearer #{token}" }
   end
 end
